@@ -1,0 +1,42 @@
+<%
+    if (typeof(error) == "undefined") {
+        error = '';
+    }
+%>
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>ログイン - Board</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+    </head>
+    <body>
+        <nav class="navbar bg-light">
+            <a class="navbar-brand" href="/index/">Board</a>
+            <ul class="nav">
+                <li class="nav-item">
+                    <a href="/regist" class="nav-link">新規ユーザ登録</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="container">
+            <p>
+                <%= error %>
+            </p>
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label for="mail">Mail</label>
+                    <input type="text" name="mail" id="mail" size="40" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" class="form-control">
+                </div>
+                <div>
+                    <input type="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
