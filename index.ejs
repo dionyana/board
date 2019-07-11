@@ -45,14 +45,25 @@
             <%  } %>
             </p>
             <hr>
-            <%  if (link_all) { %>
-            <%      for (var i = 1; i < parseInt(link_all) + 1; i++) { %>
-                        <a class="navbar-brand" href="/index/<%= i %>"><%= i %></a>
-                <%  } %>
-            <%  } %>
+            <% 
+               var cnt = 1 
+               // [result_all.length, FETCH_MAX, link_num
+               if (links) { 
+                  var link_all = Math.ceil(links[0] / links[1]);
+                  for (var i = 1; i < parseInt(link_all) + 1; i++) {
+            %>
+                    <a class="navbar-brand" href="/index/<%= i %>"><%= i %></a>
+            <%
+                  }
+                  if (links[2] && links[2] != 1) {
+                    cnt = links[1] * (links[2] - 1);
+                  }
+                } 
+            %>
             <dl>
             <% posts.forEach(function(post) { %>
                 <dt>
+                    <%= cnt++ %>: 
                     <span class="name"><%= post.name %></span>
                     <span class="time"><%= post.time.format('YYYY-MM-DD HH:mm') %></span>
                 </dt>
@@ -81,6 +92,7 @@
                         </div>
                     </dd>
                 <%  }  %>
+                <hr>
             <% }); %>
             </dl>
         </div>
