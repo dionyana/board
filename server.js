@@ -8,7 +8,7 @@ const multer = require('multer');
 const fs = require('fs');
 const moment = require('moment');
 const uuid = require('uuid');
-const FETCH_MAX = 10;
+const FETCH_MAX = 3;
 const SALT_ROUNDS = 10;
 const url = 'mongodb://localhost:27017';
 const dbName = 'SNY9036PY24';
@@ -96,7 +96,7 @@ app.get('/token', async function(req, res) {
         var vars = {
             error: 'ログインが必要です。',
             login_user: req.session.user_id,
-            link_all: 0,
+            links: [],
             posts: [],
             message: ''
         };
@@ -120,7 +120,7 @@ app.get('/token', async function(req, res) {
         var vars = {
             error: 'エラーが発生しました。',
             login_user: req.session.user_id,
-            link_all: 0,
+            links: [],
             posts: [], 
             message: ''
         };
@@ -183,7 +183,7 @@ app.post('/insert', async function(req, res) {
         var vars = {
             error: 'ログインが必要です。',
             login_user: req.session.user_id,
-            link_all: 0,
+            links: [],
             posts: [], 
             message: ''
         };
@@ -222,7 +222,7 @@ app.post('/insert', async function(req, res) {
         }
         var vars = {
             login_user: req.session.user_id,
-            link_all: 0,
+            links: [],
             posts: [],
             message: '投稿を登録しました。'
         };
@@ -244,7 +244,7 @@ app.post('/delete/*', async function(req, res) {
         var vars = {
             error: 'ログインが必要です。',
             login_user: req.session.user_id,
-            link_all: 0,
+            links: [],
             posts: [], 
             message: ''
         };
@@ -261,7 +261,7 @@ app.post('/delete/*', async function(req, res) {
         var result = await collection.deleteOne(query);
         var vars = {
             login_user: req.session.user_id,
-            link_all: 0,
+            links: [],
             posts: [],
             message: '投稿を削除しました。'
         };
@@ -271,7 +271,7 @@ app.post('/delete/*', async function(req, res) {
         var vars = {
             error: 'エラーが発生しました。',
             login_user: req.session.user_id,
-            link_all: 0,
+            links: [],
             posts: [], 
             message: ''
         };
@@ -287,8 +287,15 @@ app.get('/index/*', async function(req, res) {
     try {
         var collection = db.collection('post');
         var result_all = await collection.find().toArray();
-        var link_all = Math.ceil(result_all.length / FETCH_MAX);
+
+        //var link_all = Math.ceil(result_all.length / FETCH_MAX);
         var link_num = req.params[0].split('/')[0];
+        var links = [
+            result_all.length,
+            FETCH_MAX,
+            link_num
+        ];
+
         var cursor;
         if (link_num > 1) {
             cursor = collection.aggregate([{
@@ -328,7 +335,7 @@ app.get('/index/*', async function(req, res) {
         });
         var vars = {
             login_user: req.session.user_id,
-            link_all: link_all,
+            links: links,
             posts: posts,
             message: ''
         };
@@ -338,7 +345,7 @@ app.get('/index/*', async function(req, res) {
         var vars = {
             error: 'エラーが発生しました。',
             login_user: req.session.user_id,
-            link_all: 0,
+            links: [],
             posts: [],
             message: ''
         };
