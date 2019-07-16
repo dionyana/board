@@ -221,7 +221,7 @@ app.get('/withdraw', function(req, res) {
     res.render('comp', vars);
 });
 
-// G6 : user.update
+// G7 : user.update
 app.get('/token', async function(req, res) {
     if (!req.session.user_id) {
         catch_error('login_err', req, res, 'index');
@@ -244,7 +244,7 @@ app.get('/token', async function(req, res) {
     }
 });
 
-// G7
+// G8
 app.get('/write', function(req, res) {
     if (!req.session.user_id) {
         catch_error('login_err', req, res, 'index');
