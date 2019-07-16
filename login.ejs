@@ -1,8 +1,3 @@
-<%
-    if (typeof(error) == "undefined") {
-        error = '';
-    }
-%>
 <!doctype html>
 <html>
     <head>
@@ -22,7 +17,7 @@
         </nav>
         <div class="container">
             <p>
-                <%= error %>
+            <%- message %>
             </p>
             <form action="/login" method="POST">
                 <div class="form-group">

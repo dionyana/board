@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>完了 - Board</title>
+        <title>確認 - Board</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="/css/bootstrap.min.css">
     </head>
@@ -17,7 +17,7 @@
                 <ul class="nav">
                     <% if (login_user) { %>
                         <li class="nav-item">
-                            <a href="/token" class="nav-link">トークン</a>
+                            <a href="/token" class="nav-link">トークン発行</a>
                         </li>
                         <li class="nav-item">
                             <a href="/logout" class="nav-link">ログアウト</a>
@@ -33,8 +33,16 @@
             <p>
             <%- message %>
             </p>
-            <% if (mail) { %>
-                <%= mail %>
+            <% if (need_password) { %>
+            <form action="/withdraw" method="POST">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" class="form-control">
+                </div>
+                <div>
+                    <input type="submit" class="btn btn-primary">
+                </div>
+            </form>
             <% } %>
         </div>
     </body>

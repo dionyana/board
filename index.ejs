@@ -1,96 +1,102 @@
-<% 
-    if (typeof(error) == "undefined") {
-                error = '';
-    }
-%>
 <!doctype html>
 <html>
     <head>
         <meta charset="utf-8">
-        <title>投稿表示 - Board</title>
+        <title>投稿掲示 - Board</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="/css/bootstrap.min.css">
     </head>
     <body>
         <nav class="navbar bg-light">
             <a class="navbar-brand" href="/index/">Board</a>
+        <% if (login_user) { %>
+            <span class="navbar-text">
+                <%= login_user %>でログイン中
+            </span>
+        <% } %>
+            <ul class="nav">
             <% if (login_user) { %>
-                <span class="navbar-text">
-                    <%= login_user %>でログイン中
-                </span>
+                <li class="nav-item">
+                    <a href="/token" class="nav-link">トークン発行</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link">ログアウト</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/write" class="nav-link">新規投稿</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/withdraw" class="nav-link">脱退</a>
+                </li>
+                <li class="nav-item">
+                <% if (links[3]) { %>
+                    <a href="/index/" class="nav-link">すべての投稿掲示</a>
+                <% } else { %>
+                    <a href="/index/user" class="nav-link"><%=login_user%>でのみ投稿掲示</a>
+                <% } %>
+                </li>
+            <% } else { %>
+                <li class="nav-item">
+                    <a href="/login" class="nav-link">ログイン</a>
+                </li>
             <% } %>
-                <ul class="nav">
-                    <% if (login_user) { %>
-                        <li class="nav-item">
-                                <a href="/write" class="nav-link">新規投稿</a>
-                            </li>
-                        <li class="nav-item">
-                            <a href="/token" class="nav-link">トークン発行</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/logout" class="nav-link">ログアウト</a>
-                        </li>
-                    <% } else { %>
-                        <li class="nav-item">
-                            <a href="/login" class="nav-link">ログイン</a>
-                        </li>
-                    <% } %>
-                </ul>
+            </ul>
         </nav>
         <div class="container">
             <p>
-                <%= error %>
-            <%  if (message) { %>
-                <%= message %>
-            <%  } %>
+            <%- message %>
             </p>
             <hr>
-            <% 
-               var cnt = 1 
-               // [result_all.length, FETCH_MAX, link_num
-               if (links) { 
-                  var link_all = Math.ceil(links[0] / links[1]);
-                  for (var i = 1; i < parseInt(link_all) + 1; i++) {
+       <% 
+            var cnt = 1 
+            // [post_results.length, FETCH_MAX, link_num, user_id]
+            var link_all = Math.ceil(links[0] / links[1]);
+            for (var i = 1; i < parseInt(link_all) + 1; i++) {
+                if (links[3]) { 
             %>
-                    <a class="navbar-brand" href="/index/<%= i %>"><%= i %></a>
+                <a class="navbar-brand" href="/index/user/<%= i %>"><%= i %></a>
+            <%  } else { %>
+                <a class="navbar-brand" href="/index/<%= i %>"><%= i %></a>
             <%
-                  }
-                  if (links[2] && links[2] != 1) {
-                    cnt = links[1] * (links[2] - 1);
-                  }
-                } 
+                }
+            }
+            if (links[2] && links[2] != 1) {
+                cnt = links[1] * (links[2] - 1) + 1;
+            }
             %>
-            <dl>
             <% posts.forEach(function(post) { %>
                 <dt>
-                    <%= cnt++ %>: 
+                    <%= cnt++ %>
                     <span class="name"><%= post.name %></span>
                     <span class="time"><%= post.time.format('YYYY-MM-DD HH:mm') %></span>
                 </dt>
                 <% if (post.img) { %>
-                    <dd>
-                        <img src="<%= post.img %>" name="image" width="100" height="100">
-                    </dd>
-                <%  }  %>
+                <dd>
+                    <img src="<%= post.img %>" name="image" width="100" height="100">
+                </dd>
                 <%  
+                    }
                     if (post.message) {
                         // <をエスケープ
-                        let message = post.message.replace(/</g, '&lt;');
+                        let text_message = post.message.replace(/</g, '&lt;');
                         // 改行を<br>に変換
-                        message = message.replace(/\n/g, '<br>'); 
+                        text_message = text_message.replace(/\n/g, '<br>'); 
                 %>
-                    <dd>
-                        <%- message %>
-                    </dd>
+                <dd>
+                <%- text_message %>
+                </dd>
                 <%  }  %>
-                <% if (login_user == post.user_id) { %>
-                    <dd>
-                        <div class="form-group">
-                            <form action="/delete/<%= post.post_id %>" method="POST">
-                                <input type="submit" class="btn btn-primary" value="削除">
-                            </form>
-                        </div>
-                    </dd>
+                <%  if (login_user == post.user_id) { %>
+                <dd>
+                    <div class="form-group">
+                        <form action="/delete/<%= post.post_id %>" method="POST">
+                            <input type="submit" class="btn btn-primary" value="削除">
+                        </form>
+                        <form action="/edit/<%= post.post_id %>" method="POST">
+                            <input type="submit" class="btn btn-success" value="編集">
+                        </form>
+                    </div>
+                </dd>
                 <%  }  %>
                 <hr>
             <% }); %>
